@@ -1,0 +1,25 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "BookingApp.Users.Client";
+
+service FilesService {
+  rpc UploadFile (stream FileRequest) returns (FileResponse);
+  rpc DownloadFile (DownloadFileRequest) returns (stream DownloadFileResponse);
+}
+
+message FileRequest {
+	bytes fileData = 1;
+	string filePath = 2;
+}
+
+message FileResponse {
+	string filePath = 1;
+}
+
+message DownloadFileRequest{
+	string filePath = 1;
+}
+
+message DownloadFileResponse{
+	bytes downloadFile = 1;
+}
