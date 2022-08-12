@@ -18,8 +18,10 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: | 
+        dotnet restore BookingApp.Rooms/BookingApp.Rooms.API/BookingApp.Rooms.sln
+        dotnet restore BookingApp.Users/BookingApp.Users.API/BookingApp.Users.sln
     - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: |         
+        dotnet build --no-restore BookingApp.Rooms/BookingApp.Rooms.API/BookingApp.Rooms.sln
+        dotnet build --no-restore BookingApp.Users/BookingApp.Users.API/BookingApp.Users.sln
