@@ -5,6 +5,7 @@ using BookingApp.Users.DAL.Utils;
 using BookingApp.Users.DAL.Utils.Extensions;
 using BookingApp.Users.DomainServices.Utils;
 using BookingApp.Users.Service.Utils;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -47,6 +48,9 @@ var mapper = configuration.CreateMapper();
 
 builder.Services.AddSingleton(mapper);
 
+builder.Services.AddHealthChecks()
+    .AddCheck<SampleHealthCheck>("testSample");
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -61,6 +65,11 @@ app.UseRouting();
 app.UseAuthorization();
 app.UseEndpoints(endpoints =>
 {
+    endpoints.MapHealthChecks("/healthz/ready");
+    endpoints.MapHealthChecks("/healthz/live", new HealthCheckOptions
+    {
+        Predicate = _ => false
+    });
     endpoints.MapControllers();
 });
 
