@@ -25,3 +25,5 @@ jobs:
       run: |         
         dotnet build --no-restore BookingApp.Rooms/BookingApp.Rooms.sln
         dotnet build --no-restore BookingApp.Users/BookingApp.Users.sln
+    - name: Test
+      run: dotnet test BookingApp.Rooms/BookingApp.Rooms.sln
