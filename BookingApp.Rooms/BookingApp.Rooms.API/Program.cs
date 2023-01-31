@@ -1,6 +1,7 @@
 using AutoMapper;
 using BookingApp.Rooms.API.Utils;
 using BookingApp.Rooms.DAL.Context;
+using BookingApp.Rooms.Service.Utils;
 using BookingApp.Users.DAL.Utils;
 using BookingApp.Users.DAL.Utils.Extensions;
 using BookingApp.Users.DomainServices.Utils;
@@ -17,7 +18,7 @@ builder.Services.AddDbContextFactory<RoomsContext>(options =>
     .UseLazyLoadingProxies();
 });
 
-builder.Services.AddGrpc();
+builder.Services.AddGrpc().AddJsonTranscoding();
 builder.Services.AddControllers();
 builder.Services.RegisterSwagger("Booking App - Users API");
 builder.Services.AddRepositories();
@@ -27,6 +28,7 @@ builder.Services.AddCustomGrpc(builder.Configuration["UsersClient"]);
 var configuration = new MapperConfiguration(cfg =>
 {
     cfg.AddProfile(typeof(RoomsMappingProfile));
+    cfg.AddProfile(new BookingsMappingProfile());
 });
 
 var mapper = configuration.CreateMapper();
@@ -52,7 +54,7 @@ builder.Services.AddAuthorization();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-//app.MapGrpcService<GreeterService>();
+app.MapGrpcService<BookingApp.Rooms.Service.BookingsService>();
 
 app.UseSwagger();
 app.UseSwaggerUI();

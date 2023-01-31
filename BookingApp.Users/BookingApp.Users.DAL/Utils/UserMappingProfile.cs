@@ -22,8 +22,8 @@ namespace BookingApp.Users.DAL.Utils
                 .ForMember(opt => opt.LastName,
                     src => src.MapFrom(x => _aESCryptography.Decrypt(x.LastName)))
                 .ForMember(opt => opt.PhoneNumber,
-                    src => src.MapFrom(x => _aESCryptography.Decrypt(x.PhoneNumber)));
-            
+                    src => src.MapFrom(x => _aESCryptography.Decrypt(x.PhoneNumber)));                       
+
             CreateMap<UserDto, User>()
                 .ForMember(opt => opt.Email,
                     src => src.MapFrom(x => _aESCryptography.Encrypt(x.Email.ToLower(CultureInfo.InvariantCulture))))
@@ -44,6 +44,8 @@ namespace BookingApp.Users.DAL.Utils
                 .ForMember(opt => opt.PhoneNumber,
                     src => src.MapFrom(x => _aESCryptography.Encrypt(x.PhoneNumber)))
                 .ForMember(opt => opt.Id, src => src.Ignore());
+
+            CreateMap<UserDto, UserFullDataDto>();
         }
     }
 }

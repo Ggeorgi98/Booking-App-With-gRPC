@@ -1,4 +1,5 @@
 using AutoMapper;
+using BookingApp.Rooms.Client.Utils;
 using BookingApp.Users.API.Utils;
 using BookingApp.Users.DAL.Context;
 using BookingApp.Users.DAL.Utils;
@@ -16,10 +17,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContextFactory<UsersDBContext>(options =>
 {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new ArgumentNullException());
 });
 
-builder.Services.AddGrpc();
+builder.Services.AddGrpc().AddJsonTranscoding();
 builder.Services.AddControllers();
 builder.Services.RegisterSwagger("Booking App - Users API");
 
@@ -30,12 +31,13 @@ var appSettings = builder.Configuration.Get<AppSettings>();
 builder.Services.Configure<JwtSettings>(
     builder.Configuration.GetSection("JwtSettings"));
 
-builder.Services.RegisterAuth(appSettings);
+builder.Services.RegisterAuth(appSettings ?? throw new ArgumentNullException());
 builder.Services.AddAuthorization();
 builder.Services.AddDALUtils(builder.Configuration["CryptographySettings:EncryptionKey"], 
     builder.Configuration["CryptographySettings:EncryptionIV"]);
 builder.Services.AddRepositories();
 builder.Services.AddServices();
+builder.Services.RegisterBookingsClient(builder.Configuration["BookingsClient"]);
 
 var configuration = new MapperConfiguration(cfg =>
 {

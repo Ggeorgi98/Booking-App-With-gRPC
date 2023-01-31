@@ -74,5 +74,20 @@ namespace BookingApp.Users.API.Controllers
 
             return Ok(user.Id);
         }
+
+        [HttpGet("user-full-data/{id}")]
+        [ProducesResponseType(typeof(UserDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<ActionResult<UserFullDataDto>> GetUserFullProfileData(Guid id)
+        {
+            var response = await _usersService.UserFullProfileData(id);
+
+            if (response == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(response);
+        }
     }
 }
