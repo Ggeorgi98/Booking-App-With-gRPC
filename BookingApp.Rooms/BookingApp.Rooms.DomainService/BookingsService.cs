@@ -76,7 +76,8 @@ namespace BookingApp.Rooms.DomainService
 
             var fallbackPolicy = Policy
                 .Handle<Exception>()
-                .FallbackAsync(async (cancellationToken) => await SaveUserIdsInQueue(userIds.Select(x => Guid.Parse(x))).ConfigureAwait(false));
+                .FallbackAsync(async (cancellationToken) => await SaveUserIdsInQueue(userIds.Select(x => Guid.Parse(x)))
+                .ConfigureAwait(false));
 
             await fallbackPolicy
                .WrapAsync(retryPolicy)

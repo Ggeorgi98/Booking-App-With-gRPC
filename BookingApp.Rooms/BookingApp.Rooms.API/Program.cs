@@ -20,7 +20,7 @@ builder.Services.AddDbContextFactory<RoomsContext>(options =>
 
 builder.Services.AddGrpc().AddJsonTranscoding();
 builder.Services.AddControllers();
-builder.Services.RegisterSwagger("Booking App - Users API");
+builder.Services.RegisterSwagger("Booking App - Rooms API");
 builder.Services.AddRepositories();
 builder.Services.AddServices();
 builder.Services.AddCustomGrpc(builder.Configuration["UsersClient"]);

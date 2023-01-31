@@ -6,6 +6,7 @@ namespace BookingApp.Rooms.API.Utils
     {
         public static IServiceCollection RegisterSwagger(this IServiceCollection services, string swaggerName)
         {
+            services.AddGrpcSwagger();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = swaggerName, Version = "v1" });
