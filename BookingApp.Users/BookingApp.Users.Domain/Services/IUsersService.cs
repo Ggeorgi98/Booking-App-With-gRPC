@@ -9,5 +9,7 @@ namespace BookingApp.Users.Domain.Services
         Task<UserDto> CreateUserAsync(UserSpecDto user);
 
         Task<string> AuthenticateUserAsync(string email, string password);
+
+        Task<UserFullDataDto> UserFullProfileData(Guid userId);
     }
 }

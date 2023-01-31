@@ -110,5 +110,16 @@ namespace BookingApp.Rooms.DomainService
 
             return Task.CompletedTask;
         }
+
+        public async Task<PagedResults<BookRoomsDto>> GetUserBookingsAsync(Guid userId)
+        {
+            var pager = new Paginator
+            {
+                CurrentPage = 1,
+                PageSize = int.MaxValue
+            };
+
+            return await base.GetListAsync(pager, x => x.UserId == userId, null, true);
+        }
     }
 }

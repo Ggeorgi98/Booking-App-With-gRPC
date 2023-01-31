@@ -1,7 +1,10 @@
-﻿using BookingApp.Users.Domain.Dtos;
+﻿using AutoMapper;
+using BookingApp.Rooms.Client;
+using BookingApp.Users.Domain.Dtos;
 using BookingApp.Users.Domain.Repositories;
 using BookingApp.Users.Domain.Services;
 using BookingApp.Users.DomainServices.Utils;
+using Grpc.Core;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -13,13 +16,18 @@ namespace BookingApp.Users.DomainServices
     public class UsersService : BaseCrudService<UserDto>, IUsersService
     {
         private readonly IUsersRepository _usersRepository;
+        private readonly IBookingsClient _bookingsClient;
+        private readonly IMapper _mapper;
         private readonly JwtSettings _options;
 
-        public UsersService(IUsersRepository userRepository, IOptions<JwtSettings> options)
+        public UsersService(IUsersRepository userRepository, IOptions<JwtSettings> options, IBookingsClient bookingsClient,
+            IMapper mapper)
             : base(userRepository)
         {
             _usersRepository = userRepository;
             _options = options.Value;
+            _bookingsClient = bookingsClient;
+            _mapper = mapper;
         }
 
         public async Task<List<string>> GetExistingUserEmailsAsync(IEnumerable<string> userEmails, Guid userId)
@@ -38,7 +46,7 @@ namespace BookingApp.Users.DomainServices
 
         public async Task<string> AuthenticateUserAsync(string email, string password)
         {
-            if(string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
                 ValidationDictionary.AddModelError("Credentials required", "The email and the password are required");
                 return null!;
@@ -67,7 +75,17 @@ namespace BookingApp.Users.DomainServices
                 ValidationDictionary.AddModelError("Invalid credentials", "The email or the password is invalid");
                 return null!;
             }
-            
+
+        }
+
+        public async Task<UserFullDataDto> UserFullProfileData(Guid userId)
+        {
+            var user = await GetByIdAsync(userId);
+
+            var userFullData = _mapper.Map<UserFullDataDto>(user);
+            userFullData.BookingData = await _bookingsClient.GetLastUserBookingAsync(userId);
+
+            return userFullData;
         }
 
         private string GenerateToken(UserTokenDto user)
